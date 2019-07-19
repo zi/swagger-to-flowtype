@@ -84,8 +84,7 @@ const typeFor = (property: any): string => {
 };
 
 const isRequired = (propertyName: string, definition: Object): boolean => {
-  const result =
-    definition.required && definition.required.indexOf(propertyName) >= 0;
+  const result = !definition.properties[propertyName].nullable;
   return result;
 };
 
