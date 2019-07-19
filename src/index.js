@@ -73,7 +73,14 @@ const typeFor = (property: any): string => {
   } else if (property.type === "object") {
     return propertiesTemplate(propertiesList(property)).replace(/"/g, "");
   }
-  return typeMapping[property.type] || definitionTypeName(property.$ref);
+  if (!typeMapping[property.type] && !property.$ref) {
+    console.log(`Missing type in "${JSON.stringify(property)}"`);
+  }
+  return (
+    typeMapping[property.type] ||
+    (property.$ref && definitionTypeName(property.$ref)) ||
+    "any"
+  );
 };
 
 const isRequired = (propertyName: string, definition: Object): boolean => {
