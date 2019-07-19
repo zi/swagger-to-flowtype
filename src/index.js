@@ -182,6 +182,12 @@ const generate = (swagger: Object): string => {
   }
 
   const g = Object.keys(defs)
+    .filter(definitionName => {
+      if (definitionName.indexOf("-") !== -1) {
+        console.log(`Invalid definition name: "${definitionName}"`);
+      }
+      return definitionName.indexOf("-") === -1;
+    })
     .reduce((acc: Array<Object>, definitionName: string) => {
       const arr = acc.concat({
         title: stripBrackets(definitionName),
