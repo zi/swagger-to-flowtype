@@ -21,13 +21,23 @@ const typeMapping = {
   enum: "string"
 };
 
+const getTypeName = (name: string): string => {
+  if (program.suffix) {
+    name += program.suffix;
+  }
+  if (program.prefix) {
+    name = program.prefix + name;
+  }
+  return name;
+};
+
 const definitionTypeName = (ref): string => {
   const re = /#\/definitions\/(.*)|#\/components\/schemas\/(.*)/;
   const found = ref.match(re);
   if (!found) {
     return "";
   }
-  return found[1] || found[2];
+  return getTypeName(found[1] || found[2]);
 };
 
 const stripBrackets = (name: string) => name.replace(/[[\]']+/g, "");
@@ -94,8 +104,7 @@ const propertyKeyForDefinition = (
   propName: string,
   definition: Object
 ): string => {
-  let resolvedPropName =
-    propName.indexOf("-") > 0 ? `'${propName}'` : propName;
+  let resolvedPropName = propName.indexOf("-") > 0 ? `'${propName}'` : propName;
   if (program.lowerCamelCase) {
     resolvedPropName = camelize(resolvedPropName);
   }
@@ -196,9 +205,9 @@ const generate = (swagger: Object): string => {
       return arr;
     }, [])
     .map(definition => {
-      const s = `export type ${definition.title} = ${propertiesTemplate(
-        definition.properties
-      ).replace(/"/g, "")};`;
+      const s = `export type ${getTypeName(
+        definition.title
+      )} = ${propertiesTemplate(definition.properties).replace(/"/g, "")};`;
       return s;
     })
     .join(" ");
@@ -267,7 +276,12 @@ program
   .option("-d --destination <destination>", "Destination path")
   .option("-cr --check-required", "Add question mark to optional properties")
   .option("-e --exact", "Add exact types")
-  .option("-l --lower-camel-case", "Transform property keys to lower camel case")
+  .option(
+    "-l --lower-camel-case",
+    "Transform property keys to lower camel case"
+  )
+  .option("-s --suffix <suffix>", "Add suffix to types")
+  .option("-p --prefix <prefix>", "Add prefix to types")
   .action(async file => {
     try {
       const content = await getContent(file);
