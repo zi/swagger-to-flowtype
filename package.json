@@ -12,7 +12,8 @@
     "build": "babel ./src -d ./dist",
     "prepublish": "npm run build",
     "flow": "flow",
-    "prettier": "prettier --write {src,__{tests,mocks}__}/**/*.js"
+    "prettier": "prettier --write {src,__{tests,mocks}__}/**/*.js",
+    "prepare": "npm run build"
   },
   "author": "yayoc <hi@yayoc.com> (http://yayoc.com)",
   "license": "MIT",
