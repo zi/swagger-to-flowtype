@@ -111,6 +111,9 @@ const propertyKeyForDefinition = (
   if (program.checkRequired) {
     return `${resolvedPropName}${isRequired(propName, definition) ? "" : "?"}`;
   }
+  if (!isNaN(resolvedPropName)) {
+    resolvedPropName = `'${resolvedPropName}'`;
+  }
   return resolvedPropName;
 };
 
